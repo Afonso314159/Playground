@@ -3,7 +3,7 @@ import pygame
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((1080, 720))
+screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 dt = 0
@@ -12,7 +12,7 @@ paddle_height = 200
 half_ph = paddle_height // 2
 ball_radius = 15
 bpm_height = 2
-max_speed = 15
+max_speed = 20
 speed_factor = 1.0005
 
 
@@ -28,7 +28,6 @@ score = [0,0]
 
 # setup once, after pygame.init()
 font = pygame.font.SysFont(None, 72)  # None = default font, 72 = size
-font2 = pygame.font.SysFont(None, 60)
 
 
 while running:
@@ -47,12 +46,10 @@ while running:
     # render score texts
     score_text_left = font.render(str(score[0]), True, "white")
     score_text_right = font.render(str(score[1]), True, "white")
-    score_text = font2.render(str("Best mom"), True, "green")
 
     # blit to screen (centered near top)
     screen.blit(score_text_left, (screen.get_width()/4 - score_text_left.get_width()/2, 20))
     screen.blit(score_text_right, (3*screen.get_width()/4 - score_text_right.get_width()/2, 20))
-    screen.blit(score_text, (screen.get_width()/3 - 10 - score_text_right.get_width()/2, 20))
 
 
 
