@@ -1,6 +1,7 @@
 # Example file showing a circle moving on screen
 import pygame
 from random import randint
+import time 
 
 # pygame setup
 pygame.init()
@@ -50,7 +51,7 @@ class Snake:
         # update snake position
         self.x += mov_x
         self.y += mov_y
-        if self.x < 0 or self.y < 0 or self.x > grid[0] or self.y > grid[1]:
+        if self.x < 0 or self.y < 0 or self.x > grid[0] or self.y > grid[1] or (self.x,self.y) in self.body:
             return None
         if self.x == food[0] and self.y == food[1]:
             self.grow()
@@ -73,7 +74,10 @@ movement = [1,0]
 
 move_delay = 0.1  # seconds between moves
 time_since_move = 0
+score = 0
+font = pygame.font.SysFont(None, 72)  
 
+show_score_until = 0
 
 while running:
     # poll for events
@@ -89,28 +93,39 @@ while running:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
-        movement = [0,-1]
+        if movement[1] != 1:
+            movement = [0,-1]
     if keys[pygame.K_s]:
-        movement = [0,1]
+        if movement[1] != -1:
+            movement = [0,1]
     if keys[pygame.K_a]:
-        movement = [-1,0]
+        if movement[0] != 1:
+            movement = [-1,0]
     if keys[pygame.K_d]:
-        movement = [1,0]
+        if movement[0] != -1:
+            movement = [1,0]
 
     if time_since_move >= move_delay:
         time_since_move = 0
         hit_wall = snake.move(movement[0], movement[1], food.location(), Grid)
         if hit_wall is None:
-            break
+            show_score_until = time.time() + 5 
+            running = False
         if snake.x == food.x and snake.y == food.y:
+            score += 1
             snake.grow()
             food.respawn(Grid, snake.body)
+
     
     for segment in snake.body:
         pygame.draw.rect(screen, "green", (segment[0]*Square_side, segment[1]*Square_side, Square_side, Square_side))
 
     food_pos = food.location()    
     pygame.draw.rect(screen, "red",(food_pos[0]*Square_side, food_pos[1]*Square_side, Square_side, Square_side) )
+
+    if time.time() < show_score_until:   # ### ADDED
+        text = font.render(f"Score: {score}", True, (255, 255, 255))    
+        screen.blit(text, (screen_width//2, screen_height//2))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
@@ -121,5 +136,7 @@ while running:
     dt = clock.tick(120) / 1000  # delta time in seconds
     time_since_move += dt
 
+while time.time() < show_score_until:   # ### ADDED
+    pass
 
 pygame.quit()
