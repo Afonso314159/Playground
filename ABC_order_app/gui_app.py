@@ -1,15 +1,31 @@
 import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 import os
+import sys
 
-# Assuming your backend classes and filename_cleanup are in a file named backend.py
-# If they are in the same file, just make sure they are defined above this.
-from ABC_order_app.backend import FileManager, filename_cleanup
+# --- BACKEND IMPORT ---
+# Ensure your backend.py is in the same folder
+from backend import FileManager, filename_cleanup
 
-# --- Setup ---
-folder = "word_files"
+# --- DYNAMIC PATH LOGIC ---
+# This part ensures that 'word_files' is created in the same folder as your EXE
+if getattr(sys, 'frozen', False):
+    # If the app is "frozen" (compiled into an EXE)
+    application_path = os.path.dirname(sys.executable)
+else:
+    # If the app is running as a normal Python script
+    application_path = os.path.dirname(os.path.abspath(__file__))
+
+# Combine the path with your folder name
+folder = os.path.join(application_path, "word_files")
+
+# Create the folder if it doesn't exist
 os.makedirs(folder, exist_ok=True)
+
+# Initialize FileManager with the correct absolute path
 file_manager = FileManager(folder)
+
+# --- REST OF YOUR UI CODE STARTING WITH root = tk.Tk() ---
 
 root = tk.Tk()
 root.title("Word List Manager")
